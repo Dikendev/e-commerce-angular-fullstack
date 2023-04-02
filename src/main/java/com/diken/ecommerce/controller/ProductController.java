@@ -1,11 +1,16 @@
 package com.diken.ecommerce.controller;
 
 
+import com.diken.ecommerce.exceptions.NoProductExistInRepository;
+import com.diken.ecommerce.models.Product;
 import com.diken.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -17,5 +22,20 @@ public class ProductController {
     @GetMapping("/check")
     public String check() {
         return "ESTA FUNCIONANDO";
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Product>> getAll() {
+        try {
+            return new ResponseEntity<List<Product>>(productService.getAll(), HttpStatus.OK);
+        } catch (NoProductExistInRepository e) {
+            return new ResponseEntity("List Not Found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<Product> add(@RequestBody Product product) throws IOException {
+        Product user = productService.add(product);
+        return new ResponseEntity<Product>(user,HttpStatus.CREATED);
     }
 }
