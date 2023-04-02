@@ -27,7 +27,7 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<List<Product>> getAll() {
         try {
-            return new ResponseEntity<List<Product>>(productService.getAll(), HttpStatus.OK);
+            return new ResponseEntity<List<Product>>(productService.getAll(), HttpStatus.FOUND);
         } catch (NoProductExistInRepository e) {
             return new ResponseEntity("List Not Found", HttpStatus.NOT_FOUND);
         }
@@ -37,5 +37,14 @@ public class ProductController {
     public ResponseEntity<Product> add(@RequestBody Product product) throws IOException {
         Product user = productService.add(product);
         return new ResponseEntity<Product>(user,HttpStatus.CREATED);
+    }
+
+    @GetMapping("/get/by/id/{id}")
+    public ResponseEntity<Product> getById(@PathVariable Long id) {
+        try {
+            return new ResponseEntity<Product>(productService.getById(id),HttpStatus.FOUND);
+        } catch (NoProductExistInRepository e) {
+            return new ResponseEntity("Product not found", HttpStatus.NOT_FOUND);
+        }
     }
 }
